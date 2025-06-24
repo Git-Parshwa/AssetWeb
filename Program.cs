@@ -6,6 +6,7 @@ using AssetWeb.Models.Domain;
 using AssetWeb.Repositories;
 using AssetWeb.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -127,7 +128,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
@@ -141,6 +142,9 @@ app.UseStaticFiles(new StaticFileOptions
 // Important: UseAuthentication must come before UseAuthorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapPost("/test-anon", [AllowAnonymous] () => Results.Ok("Hello anonymous"));
+
 
 app.MapControllers();
 

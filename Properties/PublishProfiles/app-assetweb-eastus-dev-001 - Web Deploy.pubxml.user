@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <History>True|2025-06-24T07:59:02.0397563Z||;True|2025-06-24T13:21:35.7496200+05:30||;True|2025-06-24T13:16:41.3889672+05:30||;True|2025-06-24T12:36:38.0875599+05:30||;True|2025-06-24T12:35:23.5202627+05:30||;False|2025-06-24T12:33:34.4067224+05:30||;False|2025-06-24T12:31:26.1107114+05:30||;False|2025-06-24T12:30:10.2920984+05:30||;True|2025-06-24T12:22:10.6746325+05:30||;True|2025-06-24T11:42:18.0341013+05:30||;False|2025-06-24T11:41:15.9751598+05:30||;True|2025-06-24T11:39:46.3330303+05:30||;True|2025-06-24T11:34:58.8465973+05:30||;False|2025-06-24T11:16:54.6098298+05:30||;True|2025-06-24T11:12:39.0957754+05:30||;False|2025-06-24T11:11:05.6277518+05:30||;False|2025-06-24T10:50:16.3839342+05:30||;True|2025-06-24T10:46:44.0388638+05:30||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="AssetWebAuthConnectionString">
+      <Value>Server=tcp:sqlserver-assetweb-eastus-dev-001.database.windows.net,1433%3bInitial Catalog=sqldb-assetweb-eastus-dev-001%3bUser ID=assetwebadmin%3bPassword=Admin_1235%3bEncrypt=True%3bTrustServerCertificate=False%3bConnection Timeout=30%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="AssetWeb.Data.AssetWebAuthDbContext">
+      <Value>Server=tcp:sqlserver-assetweb-eastus-dev-001.database.windows.net,1433%3bInitial Catalog=sqldb-assetweb-eastus-dev-001%3bUser ID=assetwebadmin%3bPassword=Admin_1235%3bEncrypt=True%3bTrustServerCertificate=False%3bConnection Timeout=30%3b</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

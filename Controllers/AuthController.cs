@@ -37,6 +37,7 @@ namespace AssetWeb.Controllers
 
         [HttpPost]
         [Route("Register")]
+        [AllowAnonymous]
         [ValidateModel]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
@@ -76,6 +77,7 @@ namespace AssetWeb.Controllers
 
         [HttpGet]
         [Route("ConfirmEmail")]
+        [AllowAnonymous]
         [ValidateModel]
         public async Task<IActionResult> VerifyEmail(string userId, string token)
         {
@@ -96,6 +98,7 @@ namespace AssetWeb.Controllers
 
         [HttpPost]
         [Route("Login")]
+        [AllowAnonymous]
         [ValidateModel]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -130,6 +133,7 @@ namespace AssetWeb.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         [ValidateModel]
         public async Task<IActionResult> RefreshToken([FromBody] string token)
         {
@@ -177,6 +181,7 @@ namespace AssetWeb.Controllers
         }
 
         [HttpPost("logout")]
+        [AllowAnonymous]
         public async Task<IActionResult> logout()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -187,3 +187,5 @@ C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\refint\Asse
 C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\AssetWeb.pdb
 C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\AssetWeb.genruntimeconfig.cache
 C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\ref\AssetWeb.dll
+C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\AssetWeb.sourcelink.json
+C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\staticwebassets.upToDateCheck.txt

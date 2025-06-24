@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AssetWeb.Models.DTO
 {
-    public class RegisterDto
+    public class  RegisterDto
     {
         [Required]
         public string FirstName { get; set; }
