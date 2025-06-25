@@ -19,7 +19,7 @@ using Microsoft.OpenApi.Models;
 if (Environment.GetEnvironmentVariable("RENDER") == null)
 {
     // We're running locally → load from .env
-    DotNetEnv.Env.Load();
+    Env.Load();
 }
 
 var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
