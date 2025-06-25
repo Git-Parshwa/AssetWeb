@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<sitemanifest>
-  <IisApp path="C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\PubTmp\Out\" />
-  <dbfullsql path="C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\obj\Release\net9.0\PubTmp\EFSQLScripts\AssetWeb.Data.AssetWebAuthDbContext.sql" />
-</sitemanifest>
