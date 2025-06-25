@@ -164,6 +164,19 @@ app.UseAuthorization();
 
 app.MapPost("/test-anon", [AllowAnonymous] () => Results.Ok("Hello anonymous"));
 
+app.MapGet("/test-db", async (AssetWebAuthDbContext db) =>
+{
+    try
+    {
+        var canConnect = await db.Database.CanConnectAsync();
+        return canConnect ? Results.Ok("DB Connected") : Results.Problem("DB unreachable");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem("DB error: " + ex.Message);
+    }
+});
+
 
 app.MapControllers();
 
