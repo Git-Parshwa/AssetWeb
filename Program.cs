@@ -68,8 +68,10 @@ builder.Services.AddTransient<EmailService>();
 // Add AssetWebDbContext registration
 // builder.Services.AddDbContext<AssetWebDbContext>(options =>
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("AssetWebConnectionString")));
+var connectionString = builder.Configuration.GetConnectionString("AssetWebAuthConnectionString")
+    ?? Environment.GetEnvironmentVariable("DB_CONN");
 builder.Services.AddDbContext<AssetWebAuthDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AssetWebAuthConnectionString")));
+    options.UseSqlServer(connectionString));    
 
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IProfileRepository, SqlProfileRepository>();
