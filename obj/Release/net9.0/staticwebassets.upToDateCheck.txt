@@ -1,4 +1,0 @@
-wwwroot\temp
-wwwroot\data\countries+states+cities.json
-wwwroot\Images\Screenshot 2025-05-30 181433.png
-C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\wwwroot\data\countries+states+cities.json

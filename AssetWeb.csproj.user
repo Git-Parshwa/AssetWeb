@@ -2,6 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>C:\Users\parshwa\OneDrive\Desktop\dotnet\AssetWeb\Properties\PublishProfiles\app-assetweb-eastus-dev-001 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>app-assetweb-eastus-dev-001 - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
