@@ -3,9 +3,6 @@ bin/
 obj/
 out/
 
-# Publish output
-wwwroot/
-
 # User-specific files
 *.user
 *.suo
