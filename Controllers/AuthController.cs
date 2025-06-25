@@ -102,34 +102,47 @@ namespace AssetWeb.Controllers
         [ValidateModel]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await userManager.FindByEmailAsync(loginDto.Email);
-            if (user != null)
+            try
             {
-                var result = await userManager.IsEmailConfirmedAsync(user);
-                if (result == false)
+                var user = await userManager.FindByEmailAsync(loginDto.Email);
+                if (user != null)
                 {
-                    return BadRequest("Email not Verified!");
-                }
-                var checkPassword = await userManager.CheckPasswordAsync(user, loginDto.Password);
-                if (checkPassword == true)
-                {
-                    var roles = await userManager.GetRolesAsync(user);
-                    if (roles != null)
+                    var result = await userManager.IsEmailConfirmedAsync(user);
+                    if (result == false)
                     {
-                        var token = tokenRepository.GetJwtToken(user, roles.ToList());
-                        var (rawToken, hashedToken) = tokenRepository.GetRefreshToken(user);
-                        user.RefreshTokens.Add(hashedToken);
-                        await userManager.UpdateAsync(user);
-                        var loginResponseDto = new LoginResponseDto
+                        return BadRequest("Email not Verified!");
+                    }
+                    var checkPassword = await userManager.CheckPasswordAsync(user, loginDto.Password);
+                    if (checkPassword == true)
+                    {
+                        var roles = await userManager.GetRolesAsync(user);
+                        if (roles != null)
                         {
-                            JwtToken = token,
-                            RefreshToken = rawToken
-                        };
-                        return Ok(loginResponseDto);
+                            var token = tokenRepository.GetJwtToken(user, roles.ToList());
+                            var (rawToken, hashedToken) = tokenRepository.GetRefreshToken(user);
+
+                            if (user.RefreshTokens == null)
+                            {
+                                user.RefreshTokens = new List<RefreshToken>();
+                            }
+
+                            user.RefreshTokens.Add(hashedToken);
+                            await userManager.UpdateAsync(user);
+                            var loginResponseDto = new LoginResponseDto
+                            {
+                                JwtToken = token,
+                                RefreshToken = rawToken
+                            };
+                            return Ok(loginResponseDto);
+                        }
                     }
                 }
+                return BadRequest("Wrong Username or Password!");
             }
-            return BadRequest("Wrong Username or Password!");
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Login failed: {ex.Message}");
+            }
         }
 
         [HttpPost("refresh-token")]
