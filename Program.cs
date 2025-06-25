@@ -62,14 +62,24 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.PostConfigure<EmailSettings>(email =>
+{
+    email.UserName = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? email.UserName;
+    email.Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? email.Password;
+});
+
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddTransient<EmailService>();
 
 // Add AssetWebDbContext registration
 // builder.Services.AddDbContext<AssetWebDbContext>(options =>
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("AssetWebConnectionString")));
-var connectionString = builder.Configuration.GetConnectionString("AssetWebAuthConnectionString")
-    ?? Environment.GetEnvironmentVariable("DB_CONN");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
+
+if (string.IsNullOrEmpty(connectionString))
+    throw new InvalidOperationException("Database connection string not found.");
+
 builder.Services.AddDbContext<AssetWebAuthDbContext>(options =>
     options.UseSqlServer(connectionString));    
 
@@ -90,6 +100,10 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<AssetWebAuthDbContext>()
     .AddDefaultTokenProviders();
 
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration["Jwt:Issuer"];
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? builder.Configuration["Jwt:Audience"];
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"];
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -103,32 +117,22 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
     };
-    // options.Events = new JwtBearerEvents
-    // {
-    //     OnChallenge = async context =>
-    //     {
-    //         // Override the default 404 for unauthorized responses
-    //         context.HandleResponse();
-    //         context.Response.StatusCode = 401;
-    //         context.Response.ContentType = "application/json";
-    //         await context.Response.WriteAsync("{\"message\":\"Unauthorized\"}");
-    //     }
-    // };
 });
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 
