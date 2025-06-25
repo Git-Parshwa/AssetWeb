@@ -5,6 +5,7 @@ using AssetWeb.Mapping;
 using AssetWeb.Models.Domain;
 using AssetWeb.Repositories;
 using AssetWeb.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -14,6 +15,24 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+Env.Load();
+var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+var emailUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME");
+var emailPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
+var enableSwagger = Environment.GetEnvironmentVariable("ENABLE_SWAGGER");
+
+if (string.IsNullOrWhiteSpace(jwtKey) || string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
+    throw new InvalidOperationException("JWT settings are missing from environment variables.");
+
+if (string.IsNullOrWhiteSpace(emailUsername) || string.IsNullOrWhiteSpace(emailPassword))
+    throw new InvalidOperationException("Email credentials are missing from environment variables.");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Connection String is missing from environment variables.");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,8 +84,8 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 
 builder.Services.PostConfigure<EmailSettings>(email =>
 {
-    email.UserName = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? email.UserName;
-    email.Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? email.Password;
+    email.UserName = emailUsername!;
+    email.Password = emailPassword!;
 });
 
 builder.Services.AddScoped<EmailService>();
@@ -75,8 +94,6 @@ builder.Services.AddTransient<EmailService>();
 // Add AssetWebDbContext registration
 // builder.Services.AddDbContext<AssetWebDbContext>(options =>
 //     options.UseSqlServer(builder.Configuration.GetConnectionString("AssetWebConnectionString")));
-var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
-
 if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Database connection string not found.");
 
@@ -99,10 +116,6 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AssetWebAuthDbContext>()
     .AddDefaultTokenProviders();
-
-var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? builder.Configuration["Jwt:Issuer"];
-var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? builder.Configuration["Jwt:Audience"];
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? builder.Configuration["Jwt:Key"];
 
 builder.Services.AddAuthentication(options =>
 {
@@ -127,7 +140,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (builder.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true")
+if (builder.Environment.IsDevelopment() || enableSwagger?.ToLower() == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
