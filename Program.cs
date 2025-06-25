@@ -16,7 +16,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-Env.Load();
+if (Environment.GetEnvironmentVariable("RENDER") == null)
+{
+    // We're running locally → load from .env
+    DotNetEnv.Env.Load();
+}
+
 var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
 var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
@@ -24,6 +29,8 @@ var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
 var emailUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME");
 var emailPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
 var enableSwagger = Environment.GetEnvironmentVariable("ENABLE_SWAGGER");
+Console.WriteLine("JWT_KEY length: " + (jwtKey?.Length ?? 0));
+
 
 if (string.IsNullOrWhiteSpace(jwtKey) || string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudience))
     throw new InvalidOperationException("JWT settings are missing from environment variables.");
