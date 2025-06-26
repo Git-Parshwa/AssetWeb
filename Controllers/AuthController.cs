@@ -49,6 +49,12 @@ namespace AssetWeb.Controllers
                 Email = registerDto.Email
             };
 
+            var checkUserExists = await tokenRepository.CheckUserExists(user);
+            if (checkUserExists == true)
+            {
+                return Ok("User already exists! Please login.");
+            }
+
             var result = await userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)
@@ -118,6 +124,7 @@ namespace AssetWeb.Controllers
                         var roles = await userManager.GetRolesAsync(user);
                         if (roles != null)
                         {
+                            await tokenRepository.RevokeExistingRefreshToken(user.Id);
                             var token = tokenRepository.GetJwtToken(user, roles.ToList());
                             var (rawToken, hashedToken) = tokenRepository.GetRefreshToken(user);
 

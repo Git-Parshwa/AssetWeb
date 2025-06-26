@@ -13,5 +13,7 @@ namespace AssetWeb.Repositories
         string HashedToken(string refreshToken);
         Task<User?> GetCurrentUserAsync(string id);
         Task<User?> GetUserFromTokenAsync(string token);
+        Task<bool> CheckUserExists(User user);
+        Task<Guid?> RevokeExistingRefreshToken(string id);
     }
 }

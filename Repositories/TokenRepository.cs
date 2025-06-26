@@ -98,5 +98,26 @@ namespace AssetWeb.Repositories
             var user = await profileRepository.GetUserByIdAsync(userId);
             return user;
         }
+
+        public async Task<bool> CheckUserExists(User user)
+        {
+            var findUser = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == user.Email);
+            if (findUser == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<Guid?> RevokeExistingRefreshToken(string id)
+        {
+            var refreshToken = await dbContext.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == id && x.IsRevoked == false);
+            if (refreshToken == null)
+            {
+                return null;
+            }
+            refreshToken.IsRevoked = true;
+            return refreshToken.Id;
+        }
     }
 }
