@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AssetWeb.Models.DTO;
+using AssetWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetWeb.Controllers
@@ -20,81 +21,42 @@ namespace AssetWeb.Controllers
         }
 
         [HttpGet("countries")]
-        public async Task<IActionResult> GetCountries()
+        public IActionResult GetCountries()
         {
-            var path = Path.Combine(env.WebRootPath, "data", "countries+states+cities.json");
-            if (!System.IO.File.Exists(path))
-            {
-                return NotFound("countries.json file not found.");
-            }
-            var json = await System.IO.File.ReadAllTextAsync(path);
-            var countries = JsonSerializer.Deserialize<List<CountryDto>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            if (countries == null)
-            {
-                return StatusCode(500, "Failed to parse json file");
-            }
-            var response = new { countries = countries.Select(x => x.Name) };
+            var response = new { countries = CountryDataCache.Countries.Select(x => x.Name) };
             return new JsonResult(response);
         }
 
         [HttpGet("states")]
-        public async Task<IActionResult> GetStates(string selectedCountry)
+        public IActionResult GetStates(string selectedCountry)
         {
-            var path = Path.Combine(env.WebRootPath, "data", "countries+states+cities.json");
-            if (!System.IO.File.Exists(path))
-            {
-                return NotFound("json file not found.");
-            }
-            var json = await System.IO.File.ReadAllTextAsync(path);
-            var countries = JsonSerializer.Deserialize<List<CountryDto>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            if (countries != null)
-            {
-                var country = countries.FirstOrDefault(x => x.Name.Equals(selectedCountry, StringComparison.OrdinalIgnoreCase));
-                if (country != null)
-                {
-                    var response = new { states = country.States.Select(x => x.Name) };
-                    return new JsonResult(response);
-                }
-                return NotFound("Country Not Found");
-            }
-            return StatusCode(500, "Failed to parse json file");
+            var country = CountryDataCache.Countries
+                .FirstOrDefault(x => x.Name.Equals(selectedCountry, StringComparison.OrdinalIgnoreCase));
+
+            if (country == null)
+                return NotFound("Country not found");
+
+            var response = new { states = country.States.Select(x => x.Name) };
+            return new JsonResult(response);
         }
 
         [HttpGet("cities")]
-        public async Task<IActionResult> GetCities(string selectedCountry, string selectedState)
+        public IActionResult GetCities(string selectedCountry, string selectedState)
         {
-            var path = Path.Combine(env.WebRootPath, "data", "countries+states+cities.json");
-            if (!System.IO.File.Exists(path))
-            {
-                return NotFound("json file not found");
-            }
-            var json = await System.IO.File.ReadAllTextAsync(path);
-            var countries = JsonSerializer.Deserialize<List<CountryDto>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            if (countries != null)
-            {
-                var country = countries.FirstOrDefault(x => x.Name.Equals(selectedCountry, StringComparison.OrdinalIgnoreCase));
-                if (country != null)
-                {
-                    var state = country.States.FirstOrDefault(x => x.Name.Equals(selectedState, StringComparison.OrdinalIgnoreCase));
-                    if (state != null)
-                    {
-                        var response = new { cities = state.Cities.Select(x => x.Name) };
-                        return new JsonResult(response);
-                    }
-                    return NotFound("State Not Found");
-                }
-                return NotFound("Country Not Found");
-            }
-            return StatusCode(500, "Failed to parse json file");
+            var country = CountryDataCache.Countries
+                .FirstOrDefault(x => x.Name.Equals(selectedCountry, StringComparison.OrdinalIgnoreCase));
+
+            if (country == null)
+                return NotFound("Country not found");
+
+            var state = country.States
+                .FirstOrDefault(x => x.Name.Equals(selectedState, StringComparison.OrdinalIgnoreCase));
+
+            if (state == null)
+                return NotFound("State not found");
+
+            var response = new { cities = state.Cities.Select(x => x.Name) };
+            return new JsonResult(response);
         }
     }
 }

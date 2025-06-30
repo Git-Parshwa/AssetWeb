@@ -146,6 +146,8 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+CountryDataCache.Load(app.Environment);
+
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment() || enableSwagger?.ToLower() == "true")
 {
