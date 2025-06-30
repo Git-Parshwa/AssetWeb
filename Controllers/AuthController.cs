@@ -170,15 +170,15 @@ namespace AssetWeb.Controllers
             // }
 
             var hashedToken = tokenRepository.HashedToken(token);
-            // var user = await tokenRepository.GetUserFromTokenAsync(hashedToken);
-            var user = await tokenRepository.GetUserFromTokenAsync(token);
+            var user = await tokenRepository.GetUserFromTokenAsync(hashedToken);
+            // var user = await tokenRepository.GetUserFromTokenAsync(token);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            // var refreshToken = user.RefreshTokens.FirstOrDefault(x => x.Token == hashedToken);
-            var refreshToken = user.RefreshTokens.FirstOrDefault(x => x.Token == token);
+            var refreshToken = user.RefreshTokens.FirstOrDefault(x => x.Token == hashedToken);
+            // var refreshToken = user.RefreshTokens.FirstOrDefault(x => x.Token == token);
             if (refreshToken == null || refreshToken.IsRevoked)
             {
                 return Unauthorized();
@@ -201,7 +201,7 @@ namespace AssetWeb.Controllers
         }
 
         [HttpPost("logout")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> logout()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
