@@ -36,7 +36,8 @@ namespace AssetWeb.Controllers
             {
                 return StatusCode(500, "Failed to parse json file");
             }
-            return Ok(countries.Select(x => x.Name));
+            var response = new { countries = countries.Select(x => x.Name) };
+            return new JsonResult(response);
         }
 
         [HttpGet("states")]
@@ -57,7 +58,8 @@ namespace AssetWeb.Controllers
                 var country = countries.FirstOrDefault(x => x.Name.Equals(selectedCountry, StringComparison.OrdinalIgnoreCase));
                 if (country != null)
                 {
-                    return Ok(country.States.Select(x => x.Name));
+                    var response = new { states = country.States.Select(x => x.Name) };
+                    return new JsonResult(response);
                 }
                 return NotFound("Country Not Found");
             }
@@ -85,7 +87,8 @@ namespace AssetWeb.Controllers
                     var state = country.States.FirstOrDefault(x => x.Name.Equals(selectedState, StringComparison.OrdinalIgnoreCase));
                     if (state != null)
                     {
-                        return Ok(state.Cities.Select(x=>x.Name));
+                        var response = new { cities = state.Cities.Select(x => x.Name) };
+                        return new JsonResult(response);
                     }
                     return NotFound("State Not Found");
                 }
